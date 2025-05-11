@@ -1,149 +1,128 @@
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar Nomor Skyvien</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
     body {
-      background-color: #0d0d0d;
-      font-family: 'Segoe UI', sans-serif;
-      color: #0ff;
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
+      color: #00ffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin: 30px 0 10px;
+      text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff70;
+      text-align: center;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
       padding: 20px;
+      width: 95%;
+      max-width: 800px;
     }
+
+    .card {
+      background-color: #111122;
+      border: 2px solid #00ffff;
+      border-radius: 15px;
+      padding: 15px 20px;
+      box-shadow: 0 0 15px #00ffff40;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
     h2 {
-      border-bottom: 2px solid #0ff;
-      padding-bottom: 5px;
-      margin-top: 40px;
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: #00ffe5;
+      text-shadow: 0 0 5px #00ffff;
     }
-    .nomor-list {
-      margin: 10px 0;
-      padding: 10px;
-      background: #111;
-      border-left: 5px solid #0ff;
-      border-radius: 5px;
+
+    ul {
+      list-style: none;
+      padding-left: 15px;
+      color: #fff;
     }
-    .admin {
-      margin-top: 30px;
-      background: #1a1a1a;
-      padding: 15px;
-      border: 2px solid #0ff;
-      border-radius: 10px;
+
+    li {
+      margin: 6px 0;
     }
-    input, button, select {
-      padding: 10px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    input, select {
-      width: 100%;
-    }
-    button {
-      background-color: #0ff;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-    }
-    button:hover {
-      background-color: #00cccc;
+
+    @media (min-width: 600px) {
+      .container {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
 <body>
-
-  <h2>NOMOR ASLI SKYVIEN</h2>
-  <div id="skyvienList"></div>
-
-  <h2>NOMOR PARTNER PRIBADI ASLI</h2>
-  <div id="partnerList"></div>
-
-  <h2>RESELLER SKYVIEN SERI V</h2>
-  <div id="resellerVList"></div>
-
-  <h2>RESELLER SKYVIEN SERI GENX</h2>
-  <div id="resellerGenxList"></div>
-
-  <div class="admin">
-    <h3>Admin Panel</h3>
-    <input type="password" id="adminPass" placeholder="Masukkan Password Admin">
-    <select id="listType">
-      <option value="skyvien">Nomor Skyvien</option>
-      <option value="partner">Nomor Partner</option>
-      <option value="resellerV">Reseller Seri V</option>
-      <option value="resellerGenx">Reseller GenX</option>
-    </select>
-    <input type="text" id="newNumber" placeholder="Masukkan Nomor Baru">
-    <button id="addBtn">Tambah Nomor</button>
-    <input type="text" id="delNumber" placeholder="Nomor yang ingin dihapus">
-    <button id="delBtn">Hapus Nomor</button>
+  <h1>DAFTAR NOMOR SKYVIEN</h1>
+  <div class="container">
+    <div class="card">
+      <h2>NOMOR ASLI SKYVIEN</h2>
+      <ul id="skyvien-list"></ul>
+    </div>
+    <div class="card">
+      <h2>PARTNER PRIBADI ASLI</h2>
+      <ul id="partner-list"></ul>
+    </div>
+    <div class="card">
+      <h2>RESELLER SKYVIEN SERI V</h2>
+      <ul id="resellerV-list"></ul>
+    </div>
+    <div class="card">
+      <h2>RESELLER SKYVIEN SERI GENX</h2>
+      <ul id="resellerGenx-list"></ul>
+    </div>
   </div>
 
   <script>
-    window.onload = function() {
-      const adminPassword = "skyvien123";
+    const owner = 'Skyviennn'; // Ganti dengan username GitHub kamu
+    const repo = 'data-nomor';   // Ganti dengan nama repo kamu
+    const filePath = 'numbers.json';
 
-      // ambil data dari localStorage jika ada
-      let skyvienNumbers = JSON.parse(localStorage.getItem("skyvienNumbers")) || [];
-      let partnerNumbers = JSON.parse(localStorage.getItem("partnerNumbers")) || [];
-      let resellerV = JSON.parse(localStorage.getItem("resellerV")) || [];
-      let resellerGenx = JSON.parse(localStorage.getItem("resellerGenx")) || [];
+    async function loadNomor() {
+      try {
+        const res = await fetch(https://api.github.com/repos/${owner}/${repo}/contents/${filePath});
+        const data = await res.json();
+        const content = atob(data.content);
+        const json = JSON.parse(content);
 
-      function saveData() {
-        localStorage.setItem("skyvienNumbers", JSON.stringify(skyvienNumbers));
-        localStorage.setItem("partnerNumbers", JSON.stringify(partnerNumbers));
-        localStorage.setItem("resellerV", JSON.stringify(resellerV));
-        localStorage.setItem("resellerGenx", JSON.stringify(resellerGenx));
+        const updateList = (id, list) => {
+          const el = document.getElementById(id);
+          el.innerHTML = list.length > 0
+            ? list.map(n => <li>${n}</li>).join('')
+            : '<li><i>(Belum ada nomor)</i></li>';
+        };
+
+        updateList('skyvien-list', json.skyvien);
+        updateList('partner-list', json.partner);
+        updateList('resellerV-list', json.resellerV);
+        updateList('resellerGenx-list', json.resellerGenx);
+      } catch (err) {
+        console.error(err);
+        alert('Gagal memuat data dari GitHub!');
       }
+    }
 
-      function renderLists() {
-        document.getElementById("skyvienList").innerHTML = skyvienNumbers.map(n => <div class="nomor-list">${n}</div>).join("");
-        document.getElementById("partnerList").innerHTML = partnerNumbers.map(n => <div class="nomor-list">${n}</div>).join("");
-        document.getElementById("resellerVList").innerHTML = resellerV.map(n => <div class="nomor-list">${n}</div>).join("");
-        document.getElementById("resellerGenxList").innerHTML = resellerGenx.map(n => <div class="nomor-list">${n}</div>).join("");
-      }
-
-      function addNumber() {
-        const pass = document.getElementById("adminPass").value;
-        const type = document.getElementById("listType").value;
-        const newNum = document.getElementById("newNumber").value.trim();
-        if (pass !== adminPassword) return alert("Password salah!");
-        if (!newNum) return alert("Nomor tidak boleh kosong!");
-
-        if (type === "skyvien") skyvienNumbers.push(newNum);
-        if (type === "partner") partnerNumbers.push(newNum);
-        if (type === "resellerV") resellerV.push(newNum);
-        if (type === "resellerGenx") resellerGenx.push(newNum);
-
-        saveData();
-        renderLists();
-        document.getElementById("newNumber").value = "";
-      }
-
-      function deleteNumber() {
-        const pass = document.getElementById("adminPass").value;
-        const type = document.getElementById("listType").value;
-        const delNum = document.getElementById("delNumber").value.trim();
-        if (pass !== adminPassword) return alert("Password salah!");
-        if (!delNum) return alert("Masukkan nomor yang ingin dihapus!");
-
-        if (type === "skyvien") skyvienNumbers = skyvienNumbers.filter(n => n !== delNum);
-        if (type === "partner") partnerNumbers = partnerNumbers.filter(n => n !== delNum);
-        if (type === "resellerV") resellerV = resellerV.filter(n => n !== delNum);
-        if (type === "resellerGenx") resellerGenx = resellerGenx.filter(n => n !== delNum);
-
-        saveData();
-        renderLists();
-        document.getElementById("delNumber").value = "";
-      }
-
-      // Event listener
-      document.getElementById("addBtn").onclick = addNumber;
-      document.getElementById("delBtn").onclick = deleteNumber;
-
-      renderLists();
-    };
+    loadNomor();
   </script>
-
 </body>
 </html>
