@@ -33,6 +33,7 @@
       margin: 5px 0;
       border: none;
       border-radius: 5px;
+      font-size: 16px;
     }
     input, select {
       width: 100%;
@@ -42,6 +43,7 @@
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      width: 100%;
     }
     button:hover {
       background-color: #00cccc;
@@ -79,12 +81,20 @@
 
   <script>
     window.onload = function() {
-      const adminPassword = "yuri";
+      const adminPassword = "skyvien123";
 
-      let skyvienNumbers = [];
-      let partnerNumbers = [];
-      let resellerV = [];
-      let resellerGenx = [];
+      // ambil data dari localStorage jika ada
+      let skyvienNumbers = JSON.parse(localStorage.getItem("skyvienNumbers")) || [];
+      let partnerNumbers = JSON.parse(localStorage.getItem("partnerNumbers")) || [];
+      let resellerV = JSON.parse(localStorage.getItem("resellerV")) || [];
+      let resellerGenx = JSON.parse(localStorage.getItem("resellerGenx")) || [];
+
+      function saveData() {
+        localStorage.setItem("skyvienNumbers", JSON.stringify(skyvienNumbers));
+        localStorage.setItem("partnerNumbers", JSON.stringify(partnerNumbers));
+        localStorage.setItem("resellerV", JSON.stringify(resellerV));
+        localStorage.setItem("resellerGenx", JSON.stringify(resellerGenx));
+      }
 
       function renderLists() {
         document.getElementById("skyvienList").innerHTML = skyvienNumbers.map(n => <div class="nomor-list">${n}</div>).join("");
@@ -99,12 +109,13 @@
         const newNum = document.getElementById("newNumber").value.trim();
         if (pass !== adminPassword) return alert("Password salah!");
         if (!newNum) return alert("Nomor tidak boleh kosong!");
-        switch(type) {
-          case "skyvien": skyvienNumbers.push(newNum); break;
-          case "partner": partnerNumbers.push(newNum); break;
-          case "resellerV": resellerV.push(newNum); break;
-          case "resellerGenx": resellerGenx.push(newNum); break;
-        }
+
+        if (type === "skyvien") skyvienNumbers.push(newNum);
+        if (type === "partner") partnerNumbers.push(newNum);
+        if (type === "resellerV") resellerV.push(newNum);
+        if (type === "resellerGenx") resellerGenx.push(newNum);
+
+        saveData();
         renderLists();
         document.getElementById("newNumber").value = "";
       }
@@ -114,17 +125,19 @@
         const type = document.getElementById("listType").value;
         const delNum = document.getElementById("delNumber").value.trim();
         if (pass !== adminPassword) return alert("Password salah!");
-        switch(type) {
-          case "skyvien": skyvienNumbers = skyvienNumbers.filter(n => n !== delNum); break;
-          case "partner": partnerNumbers = partnerNumbers.filter(n => n !== delNum); break;
-          case "resellerV": resellerV = resellerV.filter(n => n !== delNum); break;
-          case "resellerGenx": resellerGenx = resellerGenx.filter(n => n !== delNum); break;
-        }
+        if (!delNum) return alert("Masukkan nomor yang ingin dihapus!");
+
+        if (type === "skyvien") skyvienNumbers = skyvienNumbers.filter(n => n !== delNum);
+        if (type === "partner") partnerNumbers = partnerNumbers.filter(n => n !== delNum);
+        if (type === "resellerV") resellerV = resellerV.filter(n => n !== delNum);
+        if (type === "resellerGenx") resellerGenx = resellerGenx.filter(n => n !== delNum);
+
+        saveData();
         renderLists();
         document.getElementById("delNumber").value = "";
       }
 
-      // pasang tombol
+      // Event listener
       document.getElementById("addBtn").onclick = addNumber;
       document.getElementById("delBtn").onclick = deleteNumber;
 
