@@ -1,0 +1,136 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Nomor Skyvien</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      font-family: 'Segoe UI', sans-serif;
+      color: #0ff;
+      padding: 20px;
+    }
+    h2 {
+      border-bottom: 2px solid #0ff;
+      padding-bottom: 5px;
+      margin-top: 40px;
+    }
+    .nomor-list {
+      margin: 10px 0;
+      padding: 10px;
+      background: #111;
+      border-left: 5px solid #0ff;
+      border-radius: 5px;
+    }
+    .admin {
+      margin-top: 30px;
+      background: #1a1a1a;
+      padding: 15px;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+    }
+    input, button, select {
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    input, select {
+      width: 100%;
+    }
+    button {
+      background-color: #0ff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00cccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>NOMOR ASLI SKYVIEN</h2>
+  <div id="skyvienList"></div>
+
+  <h2>NOMOR PARTNER PRIBADI ASLI</h2>
+  <div id="partnerList"></div>
+
+  <h2>RESELLER SKYVIEN SERI V</h2>
+  <div id="resellerVList"></div>
+
+  <h2>RESELLER SKYVIEN SERI GENX</h2>
+  <div id="resellerGenxList"></div>
+
+  <div class="admin">
+    <h3>Admin Panel</h3>
+    <input type="password" id="adminPass" placeholder="Masukkan Password Admin">
+    <select id="listType">
+      <option value="skyvien">Nomor Skyvien</option>
+      <option value="partner">Nomor Partner</option>
+      <option value="resellerV">Reseller Seri V</option>
+      <option value="resellerGenx">Reseller GenX</option>
+    </select>
+    <input type="text" id="newNumber" placeholder="Masukkan Nomor Baru">
+    <button id="addBtn">Tambah Nomor</button>
+    <input type="text" id="delNumber" placeholder="Nomor yang ingin dihapus">
+    <button id="delBtn">Hapus Nomor</button>
+  </div>
+
+  <script>
+    window.onload = function() {
+      const adminPassword = "yuri";
+
+      let skyvienNumbers = [];
+      let partnerNumbers = [];
+      let resellerV = [];
+      let resellerGenx = [];
+
+      function renderLists() {
+        document.getElementById("skyvienList").innerHTML = skyvienNumbers.map(n => <div class="nomor-list">${n}</div>).join("");
+        document.getElementById("partnerList").innerHTML = partnerNumbers.map(n => <div class="nomor-list">${n}</div>).join("");
+        document.getElementById("resellerVList").innerHTML = resellerV.map(n => <div class="nomor-list">${n}</div>).join("");
+        document.getElementById("resellerGenxList").innerHTML = resellerGenx.map(n => <div class="nomor-list">${n}</div>).join("");
+      }
+
+      function addNumber() {
+        const pass = document.getElementById("adminPass").value;
+        const type = document.getElementById("listType").value;
+        const newNum = document.getElementById("newNumber").value.trim();
+        if (pass !== adminPassword) return alert("Password salah!");
+        if (!newNum) return alert("Nomor tidak boleh kosong!");
+        switch(type) {
+          case "skyvien": skyvienNumbers.push(newNum); break;
+          case "partner": partnerNumbers.push(newNum); break;
+          case "resellerV": resellerV.push(newNum); break;
+          case "resellerGenx": resellerGenx.push(newNum); break;
+        }
+        renderLists();
+        document.getElementById("newNumber").value = "";
+      }
+
+      function deleteNumber() {
+        const pass = document.getElementById("adminPass").value;
+        const type = document.getElementById("listType").value;
+        const delNum = document.getElementById("delNumber").value.trim();
+        if (pass !== adminPassword) return alert("Password salah!");
+        switch(type) {
+          case "skyvien": skyvienNumbers = skyvienNumbers.filter(n => n !== delNum); break;
+          case "partner": partnerNumbers = partnerNumbers.filter(n => n !== delNum); break;
+          case "resellerV": resellerV = resellerV.filter(n => n !== delNum); break;
+          case "resellerGenx": resellerGenx = resellerGenx.filter(n => n !== delNum); break;
+        }
+        renderLists();
+        document.getElementById("delNumber").value = "";
+      }
+
+      // pasang tombol
+      document.getElementById("addBtn").onclick = addNumber;
+      document.getElementById("delBtn").onclick = deleteNumber;
+
+      renderLists();
+    };
+  </script>
+
+</body>
+</html>

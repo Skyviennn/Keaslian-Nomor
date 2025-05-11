@@ -1,1 +1,0 @@
-# Keaslian-Nomor
